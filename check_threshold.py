@@ -1,10 +1,7 @@
 import mlflow
-import os
 
-# مهم جدًا 👇
 mlflow.set_tracking_uri("file:./mlruns")
 
-# read run id
 with open("model_info.txt", "r") as f:
     run_id = f.read().strip()
 
