@@ -26,14 +26,16 @@ jobs:
 
       - name: Train model
         env:
-          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+          MLFLOW_TRACKING_URI: file:./mlruns
         run: python train.py
 
-      - name: Upload model info
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: model-info
-          path: model_info.txt
+          name: model-artifacts
+          path: |
+            model_info.txt
+            mlruns
 
   deploy:
     needs: validate
@@ -43,10 +45,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download model info
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: model-info
+          name: model-artifacts
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -55,6 +57,9 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Set MLflow tracking URI
+        run: echo "MLFLOW_TRACKING_URI=file:./mlruns" >> $GITHUB_ENV
 
       - name: Check accuracy threshold
         run: python check_threshold.py
