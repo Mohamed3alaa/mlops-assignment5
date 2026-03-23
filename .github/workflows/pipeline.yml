@@ -50,6 +50,11 @@ jobs:
         with:
           name: model-artifacts
           path: .
+          
+      - name: Fix mlruns path
+        run: |
+          mv model-artifacts/mlruns ./mlruns
+          mv model-artifacts/model_info.txt ./model_info.txt
 
       - name: Setup Python
         uses: actions/setup-python@v5
