@@ -1,14 +1,6 @@
-import mlflow
-
-# read run id
+# read accuracy from file
 with open("model_info.txt", "r") as f:
-    run_id = f.read().strip()
-
-# get run data
-client = mlflow.tracking.MlflowClient()
-run = client.get_run(run_id)
-
-accuracy = run.data.metrics["accuracy"]
+    accuracy = float(f.read().strip())
 
 print("Model accuracy:", accuracy)
 

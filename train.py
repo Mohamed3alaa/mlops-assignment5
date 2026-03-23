@@ -12,18 +12,18 @@ X, y = load_iris(return_X_y=True)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
 # start mlflow run
-with mlflow.start_run() as run:
+with mlflow.start_run():
     model = RandomForestClassifier()
     model.fit(X_train, y_train)
 
     preds = model.predict(X_test)
     acc = accuracy_score(y_test, preds)
 
-    # log accuracy
+    # log accuracy to MLflow
     mlflow.log_metric("accuracy", acc)
 
-    # save run id
-    with open("model_info.txt", "w") as f:
-        f.write(run.info.run_id)
-
     print("Accuracy:", acc)
+
+    # save accuracy to file (for pipeline)
+    with open("model_info.txt", "w") as f:
+        f.write(str(acc))
