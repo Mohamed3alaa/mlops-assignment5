@@ -1,18 +1,29 @@
 import mlflow
-import random
-import os
+import mlflow.sklearn
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
 
-mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+# load data
+X, y = load_iris(return_X_y=True)
 
+# split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# start mlflow run
 with mlflow.start_run() as run:
-    accuracy = random.uniform(0.7, 0.95)
+    model = RandomForestClassifier()
+    model.fit(X_train, y_train)
 
-    mlflow.log_metric("accuracy", accuracy)
+    preds = model.predict(X_test)
+    acc = accuracy_score(y_test, preds)
 
-    run_id = run.info.run_id
+    # log accuracy
+    mlflow.log_metric("accuracy", acc)
 
-    print("Accuracy:", accuracy)
-    print("Run ID:", run_id)
-
+    # save run id
     with open("model_info.txt", "w") as f:
-        f.write(run_id)
+        f.write(run.info.run_id)
+
+    print("Accuracy:", acc)

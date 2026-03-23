@@ -1,17 +1,19 @@
 import mlflow
-import os
 
-mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
-
+# read run id
 with open("model_info.txt", "r") as f:
     run_id = f.read().strip()
 
-run = mlflow.get_run(run_id)
+# get run data
+client = mlflow.tracking.MlflowClient()
+run = client.get_run(run_id)
+
 accuracy = run.data.metrics["accuracy"]
 
-print("Accuracy:", accuracy)
+print("Model accuracy:", accuracy)
 
+# check threshold
 if accuracy < 0.85:
-    raise Exception("Model accuracy below threshold")
+    raise Exception("Model accuracy below threshold! Failing pipeline.")
 else:
-    print("Model passed threshold")
+    print("Model passed threshold ✅")
